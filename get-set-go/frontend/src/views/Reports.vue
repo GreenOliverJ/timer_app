@@ -4,10 +4,10 @@
       <q-card-section>
         <div class="text-h6">Export Report</div>
         <div class="q-mt-sm q-mb-md row q-gutter-sm">
-          <q-btn outline dense color="primary" label="Today" @click="setPeriod('today')" />
-          <q-btn outline dense color="primary" label="This Week" @click="setPeriod('thisWeek')" />
-          <q-btn outline dense color="primary" label="This Month" @click="setPeriod('thisMonth')" />
-          <q-btn outline dense color="primary" label="Last Month" @click="setPeriod('lastMonth')" />
+          <q-btn outline dense color="secondary" label="Today" @click="setPeriod('today')" />
+          <q-btn outline dense color="secondary" label="This Week" @click="setPeriod('thisWeek')" />
+          <q-btn outline dense color="secondary" label="This Month" @click="setPeriod('thisMonth')" />
+          <q-btn outline dense color="secondary" label="Last Month" @click="setPeriod('lastMonth')" />
         </div>
         <div class="row q-mt-md q-col-gutter-md">
           <div class="col-12 col-md-4">
