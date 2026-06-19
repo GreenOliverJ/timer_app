@@ -54,9 +54,19 @@
               <q-chip v-if="entry.task" size="sm" color="orange-1" text-color="orange">{{ entry.task.name }}</q-chip>
             </q-item-label>
           </q-item-section>
-          <q-item-section side>
-            <div class="text-subtitle1 font-mono">{{ formatDuration(entry.duration) }}</div>
-            <div class="text-caption text-grey">{{ new Date(entry.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) }} - {{ entry.endTime ? new Date(entry.endTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Running' }}</div>
+          <q-item-section side class="items-end">
+            <div class="row items-center q-gutter-x-sm">
+              <div class="column items-end q-mr-sm">
+                <div class="text-subtitle1 font-mono">{{ formatDuration(entry.duration) }}</div>
+                <div class="text-caption text-grey">{{ new Date(entry.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) }} - {{ entry.endTime ? new Date(entry.endTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Running' }}</div>
+              </div>
+              <q-btn flat round dense icon="play_arrow" color="primary" @click="reuseEntry(entry)">
+                <q-tooltip>Reuse</q-tooltip>
+              </q-btn>
+              <q-btn flat round dense icon="delete" color="negative" @click="deleteEntry(entry._id)">
+                <q-tooltip>Delete</q-tooltip>
+              </q-btn>
+            </div>
           </q-item-section>
         </q-item>
         <q-item v-if="dataStore.timeEntries.length === 0">
@@ -68,7 +78,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useDataStore } from '../stores/data';
 import { useQuasar } from 'quasar';
 
@@ -87,6 +97,21 @@ const elapsedTime = ref(0);
 
 onMounted(() => {
   dataStore.fetchAll();
+  
+  const savedState = localStorage.getItem('activeTimer');
+  if (savedState) {
+    const parsed = JSON.parse(savedState);
+    startTime.value = new Date(parsed.startTime);
+    description.value = parsed.description;
+    selectedCompany.value = parsed.selectedCompany;
+    selectedProject.value = parsed.selectedProject;
+    selectedTask.value = parsed.selectedTask;
+    isRunning.value = true;
+    elapsedTime.value = Math.floor((new Date() - startTime.value) / 1000);
+    timerInterval.value = setInterval(() => {
+      elapsedTime.value = Math.floor((new Date() - startTime.value) / 1000);
+    }, 1000);
+  }
 });
 
 onUnmounted(() => {
@@ -112,10 +137,29 @@ const formatDuration = (seconds) => {
 
 const formattedTime = computed(() => formatDuration(elapsedTime.value));
 
+const saveTimerState = () => {
+  if (isRunning.value) {
+    localStorage.setItem('activeTimer', JSON.stringify({
+      startTime: startTime.value,
+      description: description.value,
+      selectedCompany: selectedCompany.value,
+      selectedProject: selectedProject.value,
+      selectedTask: selectedTask.value
+    }));
+  } else {
+    localStorage.removeItem('activeTimer');
+  }
+};
+
+watch([description, selectedCompany, selectedProject, selectedTask], () => {
+  if (isRunning.value) saveTimerState();
+});
+
 const startTimer = () => {
   isRunning.value = true;
   startTime.value = new Date();
   elapsedTime.value = 0;
+  saveTimerState();
   timerInterval.value = setInterval(() => {
     elapsedTime.value = Math.floor((new Date() - startTime.value) / 1000);
   }, 1000);
@@ -138,6 +182,7 @@ const stopTimer = async () => {
   isRunning.value = false;
   description.value = '';
   elapsedTime.value = 0;
+  saveTimerState();
 };
 
 const promptAddCompany = () => {
@@ -145,8 +190,13 @@ const promptAddCompany = () => {
     title: 'New Company',
     prompt: { model: '', type: 'text' },
     cancel: true
-  }).onOk(name => {
-    if (name) dataStore.addCompany(name);
+  }).onOk(async name => {
+    if (name) {
+      const newCompany = await dataStore.addCompany(name);
+      selectedCompany.value = newCompany;
+      selectedProject.value = null;
+      selectedTask.value = null;
+    }
   });
 };
 
@@ -162,8 +212,10 @@ const promptAddProject = () => {
         title: 'Hourly Rate',
         prompt: { model: '0', type: 'number' },
         cancel: true
-      }).onOk(rate => {
-        dataStore.addProject(name, Number(rate), selectedCompany.value._id);
+      }).onOk(async rate => {
+        const newProject = await dataStore.addProject(name, Number(rate), selectedCompany.value._id);
+        selectedProject.value = newProject;
+        selectedTask.value = null;
       });
     }
   });
@@ -174,8 +226,33 @@ const promptAddTask = () => {
     title: 'New Task',
     prompt: { model: '', type: 'text' },
     cancel: true
-  }).onOk(name => {
-    if (name) dataStore.addTask(name, selectedProject.value._id);
+  }).onOk(async name => {
+    if (name) {
+      const newTask = await dataStore.addTask(name, selectedProject.value._id);
+      selectedTask.value = newTask;
+    }
+  });
+};
+
+const reuseEntry = (entry) => {
+  if (isRunning.value) {
+    $q.notify({ type: 'warning', message: 'Stop the current timer first!' });
+    return;
+  }
+  description.value = entry.description;
+  selectedCompany.value = entry.company || null;
+  selectedProject.value = entry.project || null;
+  selectedTask.value = entry.task || null;
+  startTimer();
+};
+
+const deleteEntry = (id) => {
+  $q.dialog({
+    title: 'Confirm',
+    message: 'Are you sure you want to delete this time entry?',
+    cancel: true
+  }).onOk(() => {
+    dataStore.deleteTimeEntry(id);
   });
 };
 </script>

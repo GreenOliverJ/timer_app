@@ -24,6 +24,12 @@
           </q-item-section>
           <q-item-section>Reports</q-item-section>
         </q-item>
+        <q-item to="/settings" exact clickable v-ripple active-class="bg-primary text-white">
+          <q-item-section avatar>
+            <q-icon name="settings" />
+          </q-item-section>
+          <q-item-section>Settings</q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 

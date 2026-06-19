@@ -83,6 +83,38 @@ export const useDataStore = defineStore('data', {
       if (res.ok) {
         await this.fetchTimeEntries();
       }
+    },
+    async deleteTimeEntry(id) {
+      const res = await fetch(`http://localhost:3000/api/data/time-entries/${id}`, {
+        method: 'DELETE', headers: this.getHeaders()
+      });
+      if (res.ok) {
+        await this.fetchTimeEntries();
+      }
+    },
+    async deleteCompany(id) {
+      const res = await fetch(`http://localhost:3000/api/data/companies/${id}`, { method: 'DELETE', headers: this.getHeaders() });
+      if (res.ok) await this.fetchAll();
+    },
+    async deleteProject(id) {
+      const res = await fetch(`http://localhost:3000/api/data/projects/${id}`, { method: 'DELETE', headers: this.getHeaders() });
+      if (res.ok) await this.fetchAll();
+    },
+    async deleteTask(id) {
+      const res = await fetch(`http://localhost:3000/api/data/tasks/${id}`, { method: 'DELETE', headers: this.getHeaders() });
+      if (res.ok) await this.fetchAll();
+    },
+    async updateCompany(id, name) {
+      const res = await fetch(`http://localhost:3000/api/data/companies/${id}`, { method: 'PUT', headers: this.getHeaders(), body: JSON.stringify({ name }) });
+      if (res.ok) await this.fetchAll();
+    },
+    async updateProject(id, name, hourlyRate) {
+      const res = await fetch(`http://localhost:3000/api/data/projects/${id}`, { method: 'PUT', headers: this.getHeaders(), body: JSON.stringify({ name, hourlyRate }) });
+      if (res.ok) await this.fetchAll();
+    },
+    async updateTask(id, name) {
+      const res = await fetch(`http://localhost:3000/api/data/tasks/${id}`, { method: 'PUT', headers: this.getHeaders(), body: JSON.stringify({ name }) });
+      if (res.ok) await this.fetchAll();
     }
   }
 });
