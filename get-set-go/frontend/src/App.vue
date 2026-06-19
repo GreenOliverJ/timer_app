@@ -3,7 +3,7 @@
     <q-header elevated class="bg-primary text-white">
       <q-toolbar>
         <q-btn v-if="isAuthenticated" dense flat round icon="menu" @click="toggleLeftDrawer" />
-        <q-toolbar-title>
+        <q-toolbar-title class="app-title">
           Get Set Go
         </q-toolbar-title>
         <q-btn v-if="isAuthenticated" flat @click="logout">Logout</q-btn>
@@ -12,13 +12,13 @@
 
     <q-drawer v-if="isAuthenticated" v-model="leftDrawerOpen" show-if-above bordered class="bg-dark">
       <q-list>
-        <q-item to="/" exact clickable v-ripple>
+        <q-item to="/" exact clickable v-ripple active-class="bg-primary text-white">
           <q-item-section avatar>
             <q-icon name="timer" />
           </q-item-section>
           <q-item-section>Tracker</q-item-section>
         </q-item>
-        <q-item to="/reports" exact clickable v-ripple>
+        <q-item to="/reports" exact clickable v-ripple active-class="bg-primary text-white">
           <q-item-section avatar>
             <q-icon name="assessment" />
           </q-item-section>
@@ -53,3 +53,11 @@ const logout = () => {
   router.push('/login');
 };
 </script>
+
+<style scoped>
+.app-title {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+</style>
