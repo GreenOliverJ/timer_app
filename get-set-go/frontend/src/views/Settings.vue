@@ -32,7 +32,7 @@
             <q-item v-for="project in dataStore.projects" :key="project._id">
               <q-item-section>
                 <q-item-label>{{ project.name }}</q-item-label>
-                <q-item-label caption>{{ project.company?.name }} • €{{ project.hourlyRate }}/hr</q-item-label>
+                <q-item-label caption>{{ project.company?.name }} • {{ project.hourlyRate }}€/hr</q-item-label>
               </q-item-section>
               <q-item-section side>
                 <div class="row q-gutter-x-sm">

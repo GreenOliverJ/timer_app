@@ -3,6 +3,12 @@
     <q-card flat bordered>
       <q-card-section>
         <div class="text-h6">Export Report</div>
+        <div class="q-mt-sm q-mb-md row q-gutter-sm">
+          <q-btn outline dense color="primary" label="Today" @click="setPeriod('today')" />
+          <q-btn outline dense color="primary" label="This Week" @click="setPeriod('thisWeek')" />
+          <q-btn outline dense color="primary" label="This Month" @click="setPeriod('thisMonth')" />
+          <q-btn outline dense color="primary" label="Last Month" @click="setPeriod('lastMonth')" />
+        </div>
         <div class="row q-mt-md q-col-gutter-md">
           <div class="col-12 col-md-4">
             <q-input v-model="startDate" type="date" label="Start Date" outlined dense />
@@ -28,6 +34,38 @@ const startDate = ref('');
 const endDate = ref('');
 const authStore = useAuthStore();
 const $q = useQuasar();
+
+const setPeriod = (period) => {
+  const now = new Date();
+  let start, end;
+
+  const formatDate = (date) => {
+    const d = new Date(date);
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().split('T')[0];
+  };
+
+  if (period === 'today') {
+    start = new Date();
+    end = new Date();
+  } else if (period === 'thisWeek') {
+    start = new Date();
+    const day = start.getDay();
+    const diff = start.getDate() - day + (day === 0 ? -6 : 1);
+    start.setDate(diff);
+    end = new Date(start);
+    end.setDate(start.getDate() + 6);
+  } else if (period === 'thisMonth') {
+    start = new Date(now.getFullYear(), now.getMonth(), 1);
+    end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  } else if (period === 'lastMonth') {
+    start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    end = new Date(now.getFullYear(), now.getMonth(), 0);
+  }
+
+  startDate.value = formatDate(start);
+  endDate.value = formatDate(end);
+};
 
 const downloadPdf = async () => {
   try {
