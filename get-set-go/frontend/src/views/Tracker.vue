@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <q-card class="q-mb-md">
+    <q-card flat bordered class="q-mb-md">
       <q-card-section>
         <div class="row q-col-gutter-md items-center">
           <div class="col-12 col-md-3">
@@ -40,7 +40,7 @@
       </q-card-section>
     </q-card>
 
-    <q-card>
+    <q-card flat bordered>
       <q-card-section>
         <div class="text-h6">Time Entries</div>
       </q-card-section>

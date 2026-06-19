@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <q-card>
+    <q-card flat bordered>
       <q-card-section>
         <div class="text-h6">Export Report</div>
         <div class="row q-mt-md q-col-gutter-md">

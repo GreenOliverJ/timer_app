@@ -4,7 +4,7 @@
     <div class="row q-col-gutter-md">
       <!-- Companies -->
       <div class="col-12 col-md-4">
-        <q-card>
+        <q-card flat bordered>
           <q-card-section>
             <div class="text-h6">Companies</div>
           </q-card-section>
@@ -24,7 +24,7 @@
 
       <!-- Projects -->
       <div class="col-12 col-md-4">
-        <q-card>
+        <q-card flat bordered>
           <q-card-section>
             <div class="text-h6">Projects</div>
           </q-card-section>
@@ -47,7 +47,7 @@
 
       <!-- Tasks -->
       <div class="col-12 col-md-4">
-        <q-card>
+        <q-card flat bordered>
           <q-card-section>
             <div class="text-h6">Tasks</div>
           </q-card-section>

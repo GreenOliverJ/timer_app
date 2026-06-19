@@ -1,6 +1,6 @@
 <template>
   <q-page class="flex flex-center bg-dark-page">
-    <q-card class="bg-dark" style="width: 400px; max-width: 90vw;">
+    <q-card flat bordered class="bg-dark" style="width: 400px; max-width: 90vw;">
       <q-card-section class="bg-primary text-white">
         <div class="text-h6">{{ isLogin ? 'Login' : 'Register' }}</div>
       </q-card-section>
